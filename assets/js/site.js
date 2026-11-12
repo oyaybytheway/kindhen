@@ -78,25 +78,134 @@
     });
   });
 
+  // Express preference stays on this device only, with the basket.
+  var EXPRESS_KEY = 'hen-demo-express';
+  function readExpress(){ try{ return JSON.parse(localStorage.getItem(EXPRESS_KEY)) || {}; }catch(e){ return {}; } }
+  function writeExpress(s){ try{ localStorage.setItem(EXPRESS_KEY, JSON.stringify(s)); }catch(e){} }
+  function cartSubtotal(c){
+    var sub=0;
+    Object.keys(c||{}).forEach(function(k){ if(PRODUCTS[k] && c[k]>0) sub+=PRODUCTS[k].price*c[k]; });
+    return sub;
+  }
+  function applyExpressTotals(sub){
+    var box=document.querySelector('[data-express-box]');
+    var fields=document.querySelector('[data-express-fields]');
+    var row=document.querySelector('[data-express-row]');
+    var costEl=document.querySelector('[data-express-cost]');
+    var note=document.querySelector('[data-express-note]');
+    var totEl=document.querySelector('[data-total]');
+    var chk=document.querySelector('[data-express]');
+    var zipInp=document.querySelector('[data-express-zip]');
+    var c=read();
+    var ids=Object.keys(c).filter(function(k){ return PRODUCTS[k] && c[k]>0; });
+    var st=readExpress();
+    if(box) box.hidden=!ids.length;
+    if(!ids.length){
+      if(row) row.hidden=true;
+      if(note) note.textContent='';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    if(chk) chk.checked=!!st.on;
+    if(zipInp && document.activeElement!==zipInp) zipInp.value=st.zip||'';
+    if(fields) fields.hidden=!st.on;
+    if(!st.on){
+      if(row) row.hidden=true;
+      if(note) note.textContent='';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    var raw=zipInp?zipInp.value:(st.zip||'');
+    var zip=window.HEN_EXPRESS?HEN_EXPRESS.digits(raw):String(raw||'').replace(/\D/g,'').slice(0,5);
+    if(!window.HEN_EXPRESS){
+      if(row) row.hidden=true;
+      if(note) note.textContent='Express rates could not be loaded. Please refresh the page.';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    if(zip.length!==5){
+      if(row) row.hidden=true;
+      if(note) note.textContent='Enter your 5-digit delivery ZIP and we’ll add the express upcharge for that location.';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    var q=HEN_EXPRESS.quote(PRODUCTS,c,zip);
+    if(!q.ok){
+      if(row) row.hidden=true;
+      if(note) note.textContent = q.reason==='unknown-zip'
+        ? 'We couldn’t look up ZIP '+zip+'. Please check it, or write to us and we’ll quote the extra.'
+        : 'We couldn’t calculate express for that ZIP just now.';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    if(!q.eligible){
+      if(row){ row.hidden=false; if(costEl) costEl.textContent=money(0); }
+      if(note) note.textContent='Express isn’t available for the item in your basket. The Essential Facial Care Pack ships from the South Pacific, and we don’t have an express option we can quote. Standard shipping is already included — we cover that.';
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    if(row) row.hidden=false;
+    if(costEl) costEl.textContent=money(q.total);
+    var parts=[];
+    if(q.total===0){
+      parts.push('For ZIP '+zip+', USPS Priority Mail is at or below the standard shipping already included, so there’s no extra to pay. We’ll still request Priority if our fulfiller can send it that way.');
+    } else {
+      parts.push('This is the extra you pay for ZIP '+zip+'. We only cover standard delivery.');
+      var hasTbd=q.lines.some(function(l){ return l.origin==='us-tbd'; });
+      if(hasTbd){
+        parts.push('For items whose warehouse city isn’t confirmed yet, we quote the farthest lower-48 zone so the upcharge isn’t short. If the real extra is less at checkout, you’ll pay the lower amount.');
+      } else {
+        parts.push('Quoted from official USPS Priority Mail rates for your location.');
+      }
+      parts.push('Confirmed at payment, and only charged if we can actually send it Priority.');
+    }
+    if(q.skipped && q.skipped.length){
+      var names=q.skipped.map(function(s){ return s.name; }).join(', ');
+      parts.push(names+' stays on included standard shipping — no express option we can quote from the South Pacific.');
+    }
+    parts.push('Even with express, we can’t promise arrival by a holiday.');
+    if(note) note.textContent=parts.join(' ');
+    if(totEl) totEl.textContent=money(sub+q.total);
+  }
+
   // Cart page
   var cartEl=document.querySelector('[data-cart]');
   function renderCart(){
     if(!cartEl) return;
-    var c=read(), lines='', sub=0, ids=Object.keys(c).filter(function(k){return PRODUCTS[k] && c[k]>0;});
+    var c=read(), lines='', sub=cartSubtotal(c), ids=Object.keys(c).filter(function(k){return PRODUCTS[k] && c[k]>0;});
     if(!ids.length){
       cartEl.innerHTML='<div class="empty"><h2>Your basket is empty</h2><p class="muted">Have a look around the nest — everything is priced fairly, every day.</p><a class="btn btn--primary" href="index.html#favorites">See holiday favorites</a></div>';
     } else {
-      ids.forEach(function(id){ var p=PRODUCTS[id], q=c[id]; sub+=p.price*q;
+      ids.forEach(function(id){ var p=PRODUCTS[id], q=c[id];
         lines+='<div class="cart-line"><img src="'+p.img+'" alt=""><div><h3><a href="'+p.url+'">'+p.name+'</a></h3><div class="muted small">'+money(p.price)+' each</div>'+
         '<div class="qty" style="margin-top:8px"><button type="button" aria-label="Decrease quantity" data-dec="'+id+'">−</button><input aria-label="Quantity" value="'+q+'" readonly><button type="button" aria-label="Increase quantity" data-inc="'+id+'">+</button></div> '+
         '<button class="remove" data-rm="'+id+'">Remove</button></div><div class="price">'+money(p.price*q)+'</div></div>'; });
       cartEl.innerHTML=lines;
     }
-    var subEl=document.querySelector('[data-subtotal]'), totEl=document.querySelector('[data-total]');
-    if(subEl) subEl.textContent=money(sub); if(totEl) totEl.textContent=money(sub);
+    var subEl=document.querySelector('[data-subtotal]');
+    if(subEl) subEl.textContent=money(sub);
+    applyExpressTotals(sub);
     cartEl.querySelectorAll('[data-inc]').forEach(function(b){ b.onclick=function(){ var c=read(); c[b.dataset.inc]=Math.min(9,c[b.dataset.inc]+1); write(c); renderCart(); }; });
     cartEl.querySelectorAll('[data-dec]').forEach(function(b){ b.onclick=function(){ var c=read(); c[b.dataset.dec]=Math.max(1,c[b.dataset.dec]-1); write(c); renderCart(); }; });
     cartEl.querySelectorAll('[data-rm]').forEach(function(b){ b.onclick=function(){ var c=read(); delete c[b.dataset.rm]; write(c); renderCart(); }; });
+  }
+  var expressChk=document.querySelector('[data-express]');
+  var expressZip=document.querySelector('[data-express-zip]');
+  if(expressChk){
+    expressChk.addEventListener('change', function(){
+      var s=readExpress(); s.on=expressChk.checked; writeExpress(s);
+      applyExpressTotals(cartSubtotal(read()));
+    });
+  }
+  if(expressZip){
+    var saved=readExpress();
+    if(saved.zip) expressZip.value=saved.zip;
+    expressZip.addEventListener('input', function(){
+      var s=readExpress();
+      s.zip=window.HEN_EXPRESS?HEN_EXPRESS.digits(expressZip.value):expressZip.value;
+      writeExpress(s);
+      applyExpressTotals(cartSubtotal(read()));
+    });
   }
   renderCart();
 

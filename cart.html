@@ -39,7 +39,23 @@
   <aside class="summary">
     <h3>Order summary</h3>
     <div class="row"><span>Subtotal</span><span data-subtotal>$0.00</span></div>
-    <div class="row"><span>Standard US shipping</span><span>Free</span></div>
+    <div class="row"><span>Standard US shipping</span><span>Included</span></div>
+    <div class="express" data-express-box hidden>
+      <label class="express__label">
+        <input type="checkbox" data-express>
+        <span>Request express shipping</span>
+      </label>
+      <p class="small muted">Express is an upcharge you pay. We only cover standard delivery. Enter your delivery ZIP and we’ll add the extra for your location automatically.</p>
+      <div class="express__fields" data-express-fields hidden>
+        <label for="express-zip">Delivery ZIP</label>
+        <input id="express-zip" data-express-zip type="text" inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="12345" aria-describedby="express-note">
+        <div class="row express__cost" data-express-row hidden>
+          <span>Express upcharge <em>(you pay this)</em></span>
+          <span data-express-cost>$0.00</span>
+        </div>
+        <p class="small" id="express-note" data-express-note aria-live="polite"></p>
+      </div>
+    </div>
     <div class="row muted small"><span>Tax</span><span>Calculated at checkout</span></div>
     <div class="row total"><span>Total</span><span data-total>$0.00</span></div>
     <button class="btn btn--primary btn--block" type="button" disabled>Checkout opens soon</button>
@@ -65,7 +81,8 @@
   </div>
 </footer>
 <div class="toast" role="status" aria-live="polite"><span class="toast__msg"></span></div>
-<script>window.HEN_PRODUCTS={"charging-stand": {"name": "3-in-1 Magnetic Charging Stand", "price": 39.99, "img": "assets/img/product-charging-stand.jpg", "url": "product-charging-stand.html"}, "curl-scalp-set": {"name": "Heatless Curl & Scalp Care Gift Set", "price": 32.99, "img": "assets/img/product-curl-scalp-set.jpg", "url": "product-curl-scalp-set.html"}, "pet-mats": {"name": "Self-Warming Pet Mat, 2-Pack", "price": 34.99, "img": "assets/img/product-pet-mats.jpg", "url": "product-pet-mats.html"}, "ve-facial-care-pack": {"name": "Essential Facial Care Pack with Tamanu Oil", "price": 99.99, "img": "assets/img/product-ve-facial-care-pack.jpg", "url": "product-ve-facial-care-pack.html"}, "hen-family-throw": {"name": "Hen Family Throw", "price": 49.99, "img": "assets/img/product-hen-throw.jpg", "url": "product-hen-throw.html"}};</script>
+<script>window.HEN_PRODUCTS={"charging-stand": {"name": "3-in-1 Magnetic Charging Stand", "price": 39.99, "img": "assets/img/product-charging-stand.jpg", "url": "product-charging-stand.html", "express": {"eligible": true, "origin": "us-tbd", "weight": 2, "standard": 4.5}}, "curl-scalp-set": {"name": "Heatless Curl & Scalp Care Gift Set", "price": 32.99, "img": "assets/img/product-curl-scalp-set.jpg", "url": "product-curl-scalp-set.html", "express": {"eligible": true, "origin": "us-tbd", "weight": 1, "standard": 4.5}}, "pet-mats": {"name": "Self-Warming Pet Mat, 2-Pack", "price": 34.99, "img": "assets/img/product-pet-mats.jpg", "url": "product-pet-mats.html", "express": {"eligible": true, "origin": "us-tbd", "weight": 3, "standard": 6.5}}, "ve-facial-care-pack": {"name": "Essential Facial Care Pack with Tamanu Oil", "price": 99.99, "img": "assets/img/product-ve-facial-care-pack.jpg", "url": "product-ve-facial-care-pack.html", "express": {"eligible": false, "reason": "south-pacific"}}, "hen-family-throw": {"name": "Hen Family Throw", "price": 49.99, "img": "assets/img/product-hen-throw.jpg", "url": "product-hen-throw.html", "express": {"eligible": true, "origin": "miami", "weight": 2, "standard": 10.39}}};</script>
+<script src="assets/js/express-rates.js"></script>
 <script src="assets/js/site.js"></script>
 </body>
 </html>
