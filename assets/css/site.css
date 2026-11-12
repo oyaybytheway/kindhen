@@ -282,3 +282,35 @@ input:focus,textarea:focus{border-color:var(--gold);outline:none}
   .pdp-scene__cap{position:static;background:var(--brown);padding:12px 0}
   .pdp-scene__cap span{font-size:1rem}
 }
+/* ---------- Four-up product grid (home) ---------- */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+@media (max-width:1100px){.grid-4{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.grid-4{grid-template-columns:1fr}}
+.holiday__list{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+@media (max-width:760px){.holiday__list{grid-template-columns:1fr}}
+
+/* ---------- Official product photos + gallery ---------- */
+.card__img img[src*="product-ve-"]{object-fit:contain;background:#fff}
+.pdp--noscene{padding-top:36px}
+.pdp__media img.is-official{background:#fff;object-fit:contain;border:1px solid var(--line)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.gallery figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 8px 10px;text-align:center}
+.pdp__media .gallery img{box-shadow:none;border-radius:8px;aspect-ratio:1/1;object-fit:contain;background:#fff}
+.gallery figcaption{font-size:.82rem;font-weight:800;color:var(--brown-2);margin-top:4px}
+.pdp__origin{font-size:.82rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brown-2);margin:0 0 8px}
+.pdp__origin span{color:var(--terracotta-ink)}
+.ingr{font-size:.92rem;margin:.7em 0 0}
+
+/* ---------- Testimonials (real, attributed quotes only) ---------- */
+.quotes-sec{padding-top:8px}
+.quotes{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:760px){.quotes{grid-template-columns:1fr}}
+.quote{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px 24px;position:relative;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.quote::before{content:"“";position:absolute;top:-6px;left:22px;font-family:var(--serif);font-size:5rem;line-height:1;color:var(--gold)}
+.quote blockquote{margin:0 0 16px;flex:1}
+.quote blockquote p{font-family:var(--serif);font-size:1.12rem;line-height:1.5;margin:0;color:var(--brown)}
+.quote figcaption{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:2px}
+.quote figcaption strong{font-weight:800}
+.quote figcaption span{font-size:.86rem;color:var(--brown-2)}
+.quotes__note{font-size:.84rem;color:var(--brown-2);margin:18px 0 0;display:flex;gap:6px;align-items:flex-start;max-width:52em}
+.quotes__note svg{flex:0 0 16px;margin-top:3px}
