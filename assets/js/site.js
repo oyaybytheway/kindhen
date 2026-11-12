@@ -87,6 +87,19 @@
     Object.keys(c||{}).forEach(function(k){ if(PRODUCTS[k] && c[k]>0) sub+=PRODUCTS[k].price*c[k]; });
     return sub;
   }
+  function ineligibleCopy(ids){
+    var parts=[];
+    if(ids.indexOf('hen-family-throw')>=0){
+      parts.push("We're sorry — we can't offer express shipping on the Hen Family Throw, and we apologize for the inconvenience. It ships by the standard delivery already included in the price.");
+    }
+    if(ids.indexOf('ve-facial-care-pack')>=0){
+      parts.push("The Essential Facial Care Pack ships from the South Pacific, and we don't have an express option we can quote. Standard shipping is already included — we cover that.");
+    }
+    return parts.join(' ');
+  }
+  function skippedIds(skipped){
+    return (skipped||[]).map(function(s){ return s.id; });
+  }
   function applyExpressTotals(sub){
     var box=document.querySelector('[data-express-box]');
     var fields=document.querySelector('[data-express-fields]');
@@ -98,14 +111,37 @@
     var zipInp=document.querySelector('[data-express-zip]');
     var c=read();
     var ids=Object.keys(c).filter(function(k){ return PRODUCTS[k] && c[k]>0; });
+    var offer=document.querySelector('[data-express-offer]');
+    var sorry=document.querySelector('[data-express-unavailable]');
     var st=readExpress();
+    var eligibleIds=ids.filter(function(k){
+      var ex=PRODUCTS[k]&&PRODUCTS[k].express;
+      return ex && ex.eligible!==false;
+    });
+    var blockedIds=ids.filter(function(k){ return eligibleIds.indexOf(k)<0; });
     if(box) box.hidden=!ids.length;
     if(!ids.length){
+      if(row) row.hidden=true;
+      if(note) note.textContent='';
+      if(sorry){ sorry.hidden=true; sorry.textContent=''; }
+      if(offer) offer.hidden=true;
+      if(totEl) totEl.textContent=money(sub);
+      return;
+    }
+    if(sorry){
+      var sorryText=ineligibleCopy(blockedIds);
+      sorry.textContent=sorryText;
+      sorry.hidden=!sorryText;
+    }
+    if(!eligibleIds.length){
+      if(offer) offer.hidden=true;
+      if(fields) fields.hidden=true;
       if(row) row.hidden=true;
       if(note) note.textContent='';
       if(totEl) totEl.textContent=money(sub);
       return;
     }
+    if(offer) offer.hidden=false;
     if(chk) chk.checked=!!st.on;
     if(zipInp && document.activeElement!==zipInp) zipInp.value=st.zip||'';
     if(fields) fields.hidden=!st.on;
@@ -139,8 +175,14 @@
       return;
     }
     if(!q.eligible){
-      if(row){ row.hidden=false; if(costEl) costEl.textContent=money(0); }
-      if(note) note.textContent='Express isn’t available for the item in your basket. The Essential Facial Care Pack ships from the South Pacific, and we don’t have an express option we can quote. Standard shipping is already included — we cover that.';
+      if(offer) offer.hidden=true;
+      if(row) row.hidden=true;
+      if(note) note.textContent='';
+      if(sorry){
+        var text=ineligibleCopy(skippedIds(q.skipped).concat(blockedIds));
+        sorry.textContent=text;
+        sorry.hidden=!text;
+      }
       if(totEl) totEl.textContent=money(sub);
       return;
     }
@@ -160,8 +202,7 @@
       parts.push('Confirmed at payment, and only charged if we can actually send it Priority.');
     }
     if(q.skipped && q.skipped.length){
-      var names=q.skipped.map(function(s){ return s.name; }).join(', ');
-      parts.push(names+' stays on included standard shipping — no express option we can quote from the South Pacific.');
+      // The apology for items we can't send express is already in the notice above.
     }
     parts.push('Even with express, we can’t promise arrival by a holiday.');
     if(note) note.textContent=parts.join(' ');
