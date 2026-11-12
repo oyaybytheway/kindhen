@@ -314,3 +314,22 @@ input:focus,textarea:focus{border-color:var(--gold);outline:none}
 .quote figcaption span{font-size:.86rem;color:var(--brown-2)}
 .quotes__note{font-size:.84rem;color:var(--brown-2);margin:18px 0 0;display:flex;gap:6px;align-items:flex-start;max-width:52em}
 .quotes__note svg{flex:0 0 16px;margin-top:3px}
+
+/* ---------- Limited-run collectible + welcome ---------- */
+.pill--limited{background:var(--feather);color:var(--terracotta-ink)}
+.collectible{display:grid;grid-template-columns:1.2fr 1fr;background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);text-decoration:none;color:inherit;transition:transform .2s ease,box-shadow .2s}
+.collectible:hover{color:inherit;transform:translateY(-3px);box-shadow:0 18px 40px -16px rgba(74,42,23,.35)}
+.collectible img{width:100%;height:100%;object-fit:cover;min-height:300px;display:block}
+.collectible__copy{padding:36px 40px;display:flex;flex-direction:column;justify-content:center;background:var(--cream-2);gap:8px}
+.collectible__copy h2{margin:0;font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.15}
+.collectible__copy p{margin:0;font-size:1.05rem;color:var(--brown-2)}
+.collectible__copy .btn{align-self:flex-start;margin-top:12px;pointer-events:none}
+@media (max-width:860px){.collectible{grid-template-columns:1fr}.collectible img{min-height:220px;aspect-ratio:16/9}.collectible__copy{padding:28px 24px}}
+.welcome-strip{background:var(--cream-2);border-top:1px solid var(--line);padding:18px 0;text-align:center}
+.welcome-strip p{margin:0 auto;max-width:46em;font-size:1.02rem;color:var(--brown);line-height:1.55}
+.foot-welcome{margin-top:14px;max-width:28em;font-size:.92rem;line-height:1.5;color:#F5E6D3;opacity:.95}
+.tiles{grid-template-columns:repeat(5,1fr)}
+@media (max-width:1100px){.tiles{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.tiles{grid-template-columns:1fr}}
+.gallery--one{grid-template-columns:1fr;max-width:280px}
+.pdp__media .gallery img[src*="hen-throw-design"]{object-fit:contain;aspect-ratio:3/4;background:var(--cream)}
