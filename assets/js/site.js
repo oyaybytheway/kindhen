@@ -75,6 +75,9 @@
       var id=b.dataset.add, qInp=document.querySelector('#qty'), q= qInp ? (parseInt(qInp.value,10)||1) : 1;
       var c=read(); c[id]=Math.min(9,(c[id]||0)+q); write(c);
       var p=PRODUCTS[id]; showToast('Added to your basket: <strong>'+(p?p.name:id)+'</strong> &nbsp;<a href="'+(window.HEN_ROOT||'')+'cart.html">View basket</a>');
+      if (window.henTrack && p) {
+        henTrack.send('cart', {id:id, name:p.name, value:p.price * q, currency:'USD', content_ids:[id], quantity:q, num_items:q});
+      }
     });
   });
 
@@ -94,6 +97,9 @@
     }
     if(ids.indexOf('ve-facial-care-pack')>=0){
       parts.push("The Essential Facial Care Pack ships from the South Pacific, and we don't have an express option we can quote. Standard shipping is already included — we cover that.");
+    }
+    if(ids.indexOf('hen-family-puzzle')>=0){
+      parts.push("We don't offer express shipping on the Hen Family Puzzle. It ships by the standard delivery already included in the price.");
     }
     return parts.join(' ');
   }
