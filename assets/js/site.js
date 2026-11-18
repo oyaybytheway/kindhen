@@ -69,10 +69,106 @@
     }); });
   });
 
+  // Product option selectors (size, pack, his-and-hers)
+  function optionsRoot(from){
+    var box = from && from.closest ? from.closest('.pdp') : document.querySelector('.pdp-options');
+    return box ? box.querySelector('.pdp-options') : document.querySelector('.pdp-options');
+  }
+  function selectedOptions(root){
+    if(!root) return null;
+    var cfg;
+    try { cfg = JSON.parse(root.getAttribute('data-options') || '{}'); } catch(e){ return null; }
+    var vals = {};
+    (cfg.fields || []).forEach(function(f){
+      var fs = root.querySelector('[data-opt="'+f.id+'"]');
+      if(!fs || fs.hidden) return;
+      var inp = fs.querySelector('input:checked');
+      if(inp) vals[f.id] = inp.value;
+    });
+    return {cfg:cfg, vals:vals};
+  }
+  function resolveSku(sel){
+    if(!sel) return null;
+    var cfg = sel.cfg, v = sel.vals;
+    if(cfg.mode === 'sku_choice') return v.size || v[cfg.fields[0].id] || null;
+    if(cfg.mode === 'pattern'){
+      var sku = cfg.sku || '';
+      Object.keys(v).forEach(function(k){ sku = sku.replace('{'+k+'}', v[k]); });
+      return sku.indexOf('{') >= 0 ? null : sku;
+    }
+    if(cfg.mode === 'slippers'){
+      if(v.kind === 'mama' && v.wsize) return 'hen-slippers-mama-'+v.wsize;
+      if(v.kind === 'papa' && v.msize) return 'hen-slippers-papa-'+v.msize;
+      if(v.kind === 'set' && v.wsize && v.msize) return 'hen-slippers-set-'+v.wsize+'-'+v.msize;
+      return null;
+    }
+    return null;
+  }
+  function optionsComplete(root){
+    var sel = selectedOptions(root);
+    if(!sel) return false;
+    if(sel.cfg.mode === 'slippers'){
+      if(!sel.vals.kind) return false;
+      if((sel.vals.kind==='mama' || sel.vals.kind==='set') && !sel.vals.wsize) return false;
+      if((sel.vals.kind==='papa' || sel.vals.kind==='set') && !sel.vals.msize) return false;
+      return true;
+    }
+    return (sel.cfg.fields || []).every(function(f){
+      var fs = root.querySelector('[data-opt="'+f.id+'"]');
+      if(fs && fs.hidden) return true;
+      if(f.required && !sel.vals[f.id]) return false;
+      return true;
+    });
+  }
+  function updateOptionsUI(root){
+    if(!root) return;
+    var kindInp = root.querySelector('[data-opt="kind"] input:checked');
+    var kind = kindInp ? kindInp.value : '';
+    root.querySelectorAll('[data-required-when]').forEach(function(fs){
+      var when = (fs.getAttribute('data-required-when') || '').split(/\s+/).filter(Boolean);
+      var show = kind && when.indexOf(kind) >= 0;
+      fs.hidden = !show;
+      if(!show){
+        fs.querySelectorAll('input').forEach(function(i){ i.checked = false; });
+      }
+    });
+    var priceEl = document.querySelector('[data-pdp-price]');
+    var sel = selectedOptions(root);
+    var sku = resolveSku(sel);
+    var price = null;
+    if(sku && PRODUCTS[sku]) price = PRODUCTS[sku].price;
+    if(price === null){
+      var priced = root.querySelector('input:checked[data-price]');
+      if(priced && priced.getAttribute('data-price')) price = parseFloat(priced.getAttribute('data-price'));
+    }
+    if(priceEl && price != null && !isNaN(price)) priceEl.textContent = money(price);
+    var err = root.querySelector('[data-opt-error]');
+    if(err) err.hidden = true;
+  }
+  document.querySelectorAll('.pdp-options').forEach(function(root){
+    root.addEventListener('change', function(){ updateOptionsUI(root); });
+    updateOptionsUI(root);
+  });
+
   // Add to cart
   document.querySelectorAll('[data-add]').forEach(function(b){
     b.addEventListener('click', function(){
-      var id=b.dataset.add, qInp=document.querySelector('#qty'), q= qInp ? (parseInt(qInp.value,10)||1) : 1;
+      var id = b.dataset.add, qInp=document.querySelector('#qty'), q= qInp ? (parseInt(qInp.value,10)||1) : 1;
+      if(b.getAttribute('data-needs-options') === '1'){
+        var root = optionsRoot(b);
+        if(!root || !optionsComplete(root)){
+          var err = root && root.querySelector('[data-opt-error]');
+          if(err){ err.hidden = false; err.focus && err.focus(); }
+          return;
+        }
+        id = resolveSku(selectedOptions(root));
+      }
+      if(!id || !PRODUCTS[id]){
+        var root2 = optionsRoot(b);
+        var err2 = root2 && root2.querySelector('[data-opt-error]');
+        if(err2){ err2.hidden = false; }
+        return;
+      }
       var c=read(); c[id]=Math.min(9,(c[id]||0)+q); write(c);
       var p=PRODUCTS[id]; showToast('Added to your basket: <strong>'+(p?p.name:id)+'</strong> &nbsp;<a href="'+(window.HEN_ROOT||'')+'cart.html">View basket</a>');
       if (window.henTrack && p) {
@@ -90,16 +186,30 @@
     Object.keys(c||{}).forEach(function(k){ if(PRODUCTS[k] && c[k]>0) sub+=PRODUCTS[k].price*c[k]; });
     return sub;
   }
+  function hasFamily(ids, key){
+    return ids.some(function(id){
+      if(id===key) return true;
+      var p=PRODUCTS[id];
+      if(p && p.family===key) return true;
+      return false;
+    });
+  }
   function ineligibleCopy(ids){
     var parts=[];
-    if(ids.indexOf('hen-family-throw')>=0){
+    if(hasFamily(ids,'hen-family-throw')){
       parts.push("We're sorry — we can't offer express shipping on the Hen Family Throw, and we apologize for the inconvenience. It ships by the standard delivery already included in the price.");
     }
-    if(ids.indexOf('ve-facial-care-pack')>=0){
+    if(hasFamily(ids,'ve-facial-care-pack')){
       parts.push("The Essential Facial Care Pack ships from the South Pacific, and we don't have an express option we can quote. Standard shipping is already included — we cover that.");
     }
-    if(ids.indexOf('hen-family-puzzle')>=0){
+    if(hasFamily(ids,'hen-family-puzzle')){
       parts.push("We don't offer express shipping on the Hen Family Puzzle. It ships by the standard delivery already included in the price.");
+    }
+    if(hasFamily(ids,'hen-family-socks')){
+      parts.push("We don't offer express shipping on the Hen Family Socks. They ship by the standard delivery already included in the price.");
+    }
+    if(hasFamily(ids,'hen-family-slippers')){
+      parts.push("We don't offer express shipping on the house slippers. They ship by the standard delivery already included in the price.");
     }
     return parts.join(' ');
   }
