@@ -223,6 +223,9 @@
     if(hasFamily(ids,'bt-sleep-mask-grey')||hasFamily(ids,'retro-camera-pink')||hasFamily(ids,'nail-drill-kit-rose')||hasFamily(ids,'brush-cleaner-pink')){
       parts.push("We don't offer express shipping on the Bluetooth eye mask, retro camera, nail drill kit, or makeup brush cleaner. They ship by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
+    if(hasFamily(ids,'pocket-multitool-12in1')||hasFamily(ids,'cob-work-light-black')||hasFamily(ids,'folding-grabber-led')){
+      parts.push("We don't offer express shipping on the pocket tool, work light, or grabber. They ship by the standard delivery already included in the price, usually about 8–15 business days in transit.");
+    }
     if(hasFamily(ids,'galaxy-projector-24')){
       parts.push("We don't offer express shipping on the galaxy projector. It ships by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
