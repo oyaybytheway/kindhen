@@ -417,3 +417,5 @@ input:focus,textarea:focus{border-color:var(--gold);outline:none}
 .site-footer .signup-block input{background:#fff;color:var(--brown);border-color:transparent}
 .site-footer .signup-block a{text-decoration:underline}
 .site-footer .form-ok{background:#EAF4E6;color:#244B1F}
+.price2{display:inline-block;background:#f6e3c7;color:var(--brown);border-radius:6px;padding:0 .35em;white-space:nowrap}
+.price{font-size:1.05rem}
