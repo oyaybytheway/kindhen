@@ -214,6 +214,9 @@
     if(hasFamily(ids,'hen-family-slippers')){
       parts.push("We don't offer express shipping on the house slippers. They ship by the standard delivery already included in the price.");
     }
+    if(hasFamily(ids,'hen-pet-bandana')||hasFamily(ids,'hen-pet-feeding-mat')||hasFamily(ids,'hen-pet-bowl')){
+      parts.push("We don't offer express shipping on the Hen pet bandana, feeding mat, or bowl. They ship by the standard delivery already included in the price.");
+    }
     return parts.join(' ');
   }
   function skippedIds(skipped){
