@@ -217,6 +217,12 @@
     if(hasFamily(ids,'heatless-curl-rods-pink')){
       parts.push("We don't offer express shipping on the pink heatless curl rods. They ship by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
+    if(hasFamily(ids,'aurora-dome-projector')){
+      parts.push("We don't offer express shipping on the aurora night light projector. It ships by the standard delivery already included in the price, usually about 2–6 business days in transit.");
+    }
+    if(hasFamily(ids,'galaxy-projector-24')){
+      parts.push("We don't offer express shipping on the galaxy projector. It ships by the standard delivery already included in the price, usually about 8–15 business days in transit.");
+    }
     if(hasFamily(ids,'charger-3in1-black')){
       parts.push("We don't offer express shipping on the 3-in-1 charger. It ships by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
