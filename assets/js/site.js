@@ -371,5 +371,26 @@
     f.addEventListener('submit', function(e){ e.preventDefault(); var ok=f.querySelector('.form-ok'); if(ok){ ok.classList.add('show'); ok.focus && ok.focus(); } });
   });
 
+  // Optional mailto fallback (email sign-up before the list is connected, and product requests)
+  document.querySelectorAll('form[data-mailto]').forEach(function(f){
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (f.checkValidity && !f.checkValidity()) { f.reportValidity && f.reportValidity(); return; }
+      var to = f.getAttribute('data-mailto') || 'support@kindhen.com';
+      var subject = f.getAttribute('data-subject') || '';
+      var parts = [];
+      f.querySelectorAll('input,textarea,select').forEach(function(el){
+        if (!el.name || el.disabled || el.type === 'submit') return;
+        parts.push((el.name) + ': ' + (el.value || ''));
+      });
+      var url = 'mailto:' + encodeURIComponent(to)
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(parts.join('\n\n'));
+      window.location.href = url;
+      var ok = f.querySelector('.form-ok');
+      if (ok) { ok.classList.add('show'); if (ok.focus) ok.focus(); }
+    });
+  });
+
   updateCount();
 })();
