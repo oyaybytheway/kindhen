@@ -372,6 +372,40 @@
   }
   renderCart();
 
+  // Checkout: sends only SKUs and quantities to the Hen checkout server, which
+  // creates a Stripe Checkout Session from Stripe's own prices. Off until opened.
+  var CO = window.HEN_CHECKOUT || {};
+  var coBtn = document.querySelector('[data-checkout]');
+  if (coBtn && CO.open && CO.endpoint) {
+    document.querySelectorAll('[data-checkout-closed]').forEach(function(el){ el.hidden = true; });
+    document.querySelectorAll('[data-checkout-open]').forEach(function(el){ el.hidden = false; });
+    var coErr = document.querySelector('[data-checkout-error]');
+    var setBtn = function(){
+      var c = read(), n = 0; for (var k in c) if (PRODUCTS[k] && c[k] > 0) n++;
+      coBtn.disabled = n === 0; coBtn.textContent = 'Checkout securely';
+    };
+    setBtn();
+    if (cartEl) cartEl.addEventListener('click', function(){ setTimeout(setBtn, 0); });
+    coBtn.addEventListener('click', function(){
+      var c = read(), items = [], value = 0, ids = [];
+      for (var k in c) if (PRODUCTS[k] && c[k] > 0) { items.push({sku:k, qty:c[k]}); value += PRODUCTS[k].price * c[k]; ids.push(k); }
+      if (!items.length) return;
+      coBtn.disabled = true; coBtn.textContent = 'Opening secure checkout…';
+      if (coErr) coErr.hidden = true;
+      if (window.henTrack) henTrack.send('checkout', {value:value, currency:'USD', content_ids:ids, num_items:items.length});
+      fetch(CO.endpoint, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({items:items})})
+        .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+        .then(function(x){
+          if (x.ok && x.d && typeof x.d.url === 'string' && x.d.url.indexOf('https://checkout.stripe.com/') === 0) { window.location.href = x.d.url; return; }
+          throw new Error((x.d && x.d.error) || 'We could not start checkout. Please try again in a moment.');
+        })
+        .catch(function(e){
+          if (coErr) { coErr.textContent = (e && e.message) || 'We could not start checkout. Please try again in a moment.'; coErr.hidden = false; }
+          setBtn();
+        });
+    });
+  }
+
   // Forms that don't send yet
   document.querySelectorAll('form[data-demo]').forEach(function(f){
     f.addEventListener('submit', function(e){ e.preventDefault(); var ok=f.querySelector('.form-ok'); if(ok){ ok.classList.add('show'); ok.focus && ok.focus(); } });
