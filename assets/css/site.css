@@ -419,3 +419,5 @@ input:focus,textarea:focus{border-color:var(--gold);outline:none}
 .site-footer .form-ok{background:#EAF4E6;color:#244B1F}
 .price2{display:inline-block;background:#f6e3c7;color:var(--brown);border-radius:6px;padding:0 .35em;white-space:nowrap}
 .price{font-size:1.05rem}
+.was{color:#9a8a7a;font-weight:600;text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#c0392b}
+.saved-banner{display:inline-block;margin-top:6px;background:#2e7d4f;color:#fff;font-weight:700;font-size:.85rem;border-radius:999px;padding:3px 10px}

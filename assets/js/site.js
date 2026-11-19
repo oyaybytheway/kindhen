@@ -340,9 +340,9 @@
       cartEl.innerHTML='<div class="empty"><h2>Your basket is empty</h2><p class="muted">Have a look around the nest — everything is priced fairly, every day.</p><a class="btn btn--primary" href="index.html#favorites">See holiday favorites</a></div>';
     } else {
       ids.forEach(function(id){ var p=PRODUCTS[id], q=c[id];
-        lines+='<div class="cart-line"><img src="'+p.img+'" alt=""><div><h3><a href="'+p.url+'">'+p.name+'</a></h3><div class="muted small">'+money(p.price)+' each</div>'+
+        lines+='<div class="cart-line"><img src="'+p.img+'" alt=""><div><h3><a href="'+p.url+'">'+p.name+'</a></h3><div class="muted small">'+(p.compare?'<s class="was">'+money(p.compare)+'</s> ':'')+money(p.price)+' each</div>'+(p.compare?'<div class="saved-banner">🎉 You saved '+money((p.compare-p.price)*q)+' with our '+(p.deal_note||'deal')+' deal!</div>':'')+
         '<div class="qty" style="margin-top:8px"><button type="button" aria-label="Decrease quantity" data-dec="'+id+'">−</button><input aria-label="Quantity" value="'+q+'" readonly><button type="button" aria-label="Increase quantity" data-inc="'+id+'">+</button></div> '+
-        '<button class="remove" data-rm="'+id+'">Remove</button></div><div class="price">'+money(p.price*q)+'</div></div>'; });
+        '<button class="remove" data-rm="'+id+'">Remove</button></div><div class="price">'+(p.compare?'<s class="was">'+money(p.compare*q)+'</s><br>':'')+money(p.price*q)+'</div></div>'; });
       cartEl.innerHTML=lines;
     }
     var subEl=document.querySelector('[data-subtotal]');
