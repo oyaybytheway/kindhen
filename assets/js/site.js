@@ -202,6 +202,9 @@
     if(hasFamily(ids,'ve-facial-care-pack')){
       parts.push("The Essential Facial Care Pack ships from the South Pacific, and we don't have an express option we can quote. Standard shipping is already included — we cover that.");
     }
+    if(hasFamily(ids,'curl-scalp-set')){
+      parts.push("We don't offer express shipping on the pink heatless curl set. It ships from the United Kingdom by the standard delivery already included in the price, typically about 8–14 days to the US.");
+    }
     if(hasFamily(ids,'hen-family-puzzle')){
       parts.push("We don't offer express shipping on the Hen Family Puzzle. It ships by the standard delivery already included in the price.");
     }
