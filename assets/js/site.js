@@ -1,4 +1,4 @@
-/* Hen storefront preview — front-end only. No real checkout, no data leaves the browser. */
+/* Hen storefront. Basket stays on this device until checkout, which POSTs SKUs to the Hen checkout server. */
 (function(){
   var PRODUCTS = window.HEN_PRODUCTS || {};
   var KEY = 'hen-demo-cart';
