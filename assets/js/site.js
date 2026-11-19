@@ -215,10 +215,10 @@
       parts.push("We don't offer express shipping on the house slippers. They ship by the standard delivery already included in the price.");
     }
     if(hasFamily(ids,'heatless-curl-rods-pink')){
-      parts.push("We don't offer express shipping on the pink heatless curl rods. They ship from China by the standard delivery already included in the price, usually about 8–15 business days in transit.");
+      parts.push("We don't offer express shipping on the pink heatless curl rods. They ship by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
     if(hasFamily(ids,'charger-3in1-black')){
-      parts.push("We don't offer express shipping on the 3-in-1 charger. It ships from China by the standard delivery already included in the price, usually about 8–15 business days in transit.");
+      parts.push("We don't offer express shipping on the 3-in-1 charger. It ships by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
     if(hasFamily(ids,'hen-pet-bandana')||hasFamily(ids,'hen-pet-feeding-mat')||hasFamily(ids,'hen-pet-bowl')){
       parts.push("We don't offer express shipping on the Hen pet bandana, feeding mat, or bowl. They ship by the standard delivery already included in the price.");
