@@ -421,3 +421,6 @@ input:focus,textarea:focus{border-color:var(--gold);outline:none}
 .price{font-size:1.05rem}
 .was{color:#9a8a7a;font-weight:600;text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#c0392b}
 .saved-banner{display:inline-block;margin-top:6px;background:#2e7d4f;color:#fff;font-weight:700;font-size:.85rem;border-radius:999px;padding:3px 10px}
+.pdp__highlights{list-style:none;padding:0;margin:12px 0 6px;display:grid;gap:6px}
+.pdp__highlights li{position:relative;padding-left:26px;font-size:.98rem;line-height:1.4}
+.pdp__highlights li::before{content:"✓";position:absolute;left:0;top:0;font-weight:800;color:var(--terracotta-ink)}

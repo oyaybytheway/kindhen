@@ -220,6 +220,9 @@
     if(hasFamily(ids,'aurora-dome-projector')){
       parts.push("We don't offer express shipping on the aurora night light projector. It ships by the standard delivery already included in the price, usually about 2–6 business days in transit.");
     }
+    if(hasFamily(ids,'bt-sleep-mask-grey')||hasFamily(ids,'retro-camera-pink')||hasFamily(ids,'nail-drill-kit-rose')||hasFamily(ids,'brush-cleaner-pink')){
+      parts.push("We don't offer express shipping on the Bluetooth eye mask, retro camera, nail drill kit, or makeup brush cleaner. They ship by the standard delivery already included in the price, usually about 8–15 business days in transit.");
+    }
     if(hasFamily(ids,'galaxy-projector-24')){
       parts.push("We don't offer express shipping on the galaxy projector. It ships by the standard delivery already included in the price, usually about 8–15 business days in transit.");
     }
