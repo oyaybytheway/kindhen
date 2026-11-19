@@ -200,10 +200,10 @@
       parts.push("We're sorry — we can't offer express shipping on the Hen Family Throw, and we apologize for the inconvenience. It ships by the standard delivery already included in the price.");
     }
     if(hasFamily(ids,'ve-facial-care-pack')){
-      parts.push("The Essential Facial Care Pack ships from the South Pacific, and we don't have an express option we can quote. Standard shipping is already included — we cover that.");
+      parts.push("We don't offer express shipping on the Essential Facial Care Pack. Standard shipping is already included — we cover that. Please allow 24–48 hours for processing, then typically 10–14 days, sometimes up to 21 working days.");
     }
     if(hasFamily(ids,'curl-scalp-set')){
-      parts.push("We don't offer express shipping on the pink heatless curl set. It ships from the United Kingdom by the standard delivery already included in the price, typically about 8–14 days to the US.");
+      parts.push("We don't offer express shipping on the pink heatless curl set. It ships by the standard delivery already included in the price, typically about 8–14 days.");
     }
     if(hasFamily(ids,'hen-family-puzzle')){
       parts.push("We don't offer express shipping on the Hen Family Puzzle. It ships by the standard delivery already included in the price.");
@@ -323,7 +323,7 @@
       parts.push('This is the extra you pay for ZIP '+zip+'. We only cover standard delivery.');
       var hasTbd=q.lines.some(function(l){ return l.origin==='us-tbd'; });
       if(hasTbd){
-        parts.push('For items whose warehouse city isn’t confirmed yet, we quote the farthest lower-48 zone so the upcharge isn’t short. If the real extra is less at checkout, you’ll pay the lower amount.');
+        parts.push('For items whose fulfillment location isn’t confirmed yet, we quote the farthest lower-48 zone so the upcharge isn’t short. If the real extra is less at checkout, you’ll pay the lower amount.');
       } else {
         parts.push('Quoted from official USPS Priority Mail rates for your location.');
       }
